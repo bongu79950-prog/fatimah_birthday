@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cosmos</title>
+    <!-- Premium Typography Layout -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Poppins:wght@300;400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --earth-glow: #48cae4;
+            --bg-space: #010103;
+            --celebrate-gold: #ffd700;
+            --panel-bg: rgba(255, 255, 255, 0.05);
+            --panel-border: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+            touch-action: none;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-space);
+            color: #ffffff;
+        }
+
+        #orbit-engine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- LOCK SCREEN OVERLAY --- */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+        }
+
+        .lock-container {
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+            background: transparent; 
+            padding: 0 24px;
+        }
+
+        .hint-reminder-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--earth-glow);
+            margin-bottom: 32px;
+            min-height: 40px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(72, 202, 228, 0.4);
+        }
+
+        .hint-reminder-text.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .passcode-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #hidden-pass-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .pass-cell {
+            width: 62px;
+            height: 70px;
+            border-radius: 16px;
+            background: rgba(1, 1, 3, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.25); 
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px); 
+        }
+
+        .pass-cell.active {
+            border-color: var(--earth-glow);
+            background: rgba(72, 202, 228, 0.08);
+            box-shadow: 0 0 15px rgba(72, 202, 228, 0.35);
+        }
+
+        .pass-cell.error {
+            border-color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.08);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* --- CELEBRATION CARD OVERLAY --- */
+        #birthday-portal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .birthday-card {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 2.0s ease, transform 2.0s ease, filter 1.5s ease;
+        }
+
+        .birthday-card.ignite {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .birthday-card.fade-out {
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(-30px);
+        }
+
+        .bday-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 3.5rem;
+            line-height: 1.1;
+            color: #ffffff;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 30px rgba(72, 202, 228, 0.4);
+            margin-bottom: 8px;
+        }
+
+        .bday-sparkle-sub {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--celebrate-gold);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        /* --- CINEMATIC END CREDITS SYSTEM --- */
+        #credits-window {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 15;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            background: rgba(1, 1, 3, 0.0);
+            transition: background 3.0s ease;
+        }
+
+        #credits-window.active {
+            background: rgba(1, 1, 3, 0.65); 
+        }
+
+        .credits-container {
+            position: absolute;
+            top: 100%; 
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 48px; 
+        }
+
+        .credits-container.roll {
+            animation: cinematicScroll 28s linear forwards;
+        }
+
+        .credit-line {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            line-height: 1.3;
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+        }
+
+        .credit-line.highlight {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: var(--earth-glow);
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(72, 202, 228, 0.6);
+        }
+
+        @keyframes cinematicScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-155%); }
+        }
+
+        /* --- THREE HUB BLOCKS LAYOUT --- */
+        #interactive-hub {
+            position: absolute;
+            bottom: -200px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 24px 0;
+            transition: bottom 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 1.0s ease;
+            opacity: 0;
+        }
+
+        #interactive-hub.show {
+            bottom: 40px;
+            opacity: 1;
+        }
+
+        .hub-block {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hub-block:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--earth-glow);
+        }
+
+        .hub-icon {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.08);
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        }
+
+        .hub-info {
+            flex-grow: 1;
+        }
+
+        .hub-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .hub-subtitle {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+        }
+
+        .hub-arrow {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .hub-block:hover .hub-arrow {
+            color: var(--earth-glow);
+            transform: translateX(4px);
+        }
+
+        /* --- IMMERSIVE INTERACTIVE DISPLAY WINDOW (MODAL) --- */
+        .content-overlay-window {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(1, 1, 3, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-overlay-window.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .window-header {
+            width: 100%;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            z-index: 10;
+        }
+
+        .window-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--earth-glow);
+        }
+
+        .window-close-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .window-body {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- IMMERSIVE PHONE RATIO NOTEBOOK SCALING ENGINE --- */
+        .book-container {
+            width: 100%;
+            height: 100%;
+            max-width: 360px; /* Optimized phone layout width */
+            aspect-ratio: 9 / 16; /* Clean smartphone orientation aspect */
+            perspective: 1500px;
+            position: relative;
+        }
+
+        .interactive-book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.0s ease;
+        }
+
+        /* Front cover scaled to match mobile display dimensions */
+        .book-cover-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3d1f0c, #1a0b02);
+            border-radius: 6px 16px 16px 6px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+            border: 3px solid #4d2b14;
+            z-index: 5;
+            transform-origin: left center;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding: 24px;
+        }
+
+        .book-cover-front .gold-emboss {
+            font-family: 'Cormorant Garamond', serif;
+            color: #ffd700;
+            font-size: 1.8rem;
+            font-style: italic;
+            text-align: center;
+            border: 2px dashed #ffd700;
+            padding: 24px 16px;
+            border-radius: 6px;
+            box-shadow: inset 0 0 15px rgba(255,215,0,0.15);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+            line-height: 1.4;
+        }
+
+        .book-cover-front .tap-hint {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 40px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Core inner notebook page stack */
+        .book-pages-stack {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fdfaf2;
+            border-radius: 4px 14px 14px 4px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            z-index: 2;
+            overflow: hidden;
+            display: none; 
+            flex-direction: column;
+        }
+
+        .book-container.opened .book-cover-front {
+            transform: rotateY(-145deg);
+        }
+
+        /* Inner Phone Page Sheets */
+        .scrap-page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #faf6ed;
+            background-image: linear-gradient(rgba(72, 140, 228, 0.12) 1px, transparent 1px);
+            background-size: 100% 26px;
+            padding: 24px 16px 70px 36px; /* Optimized phone ring padding spacing */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        /* Mobile spiral wire notebook bind overlay */
+        .book-pages-stack::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10px;
+            width: 14px;
+            height: 100%;
+            background-image: radial-gradient(circle, #615a50 15%, transparent 20%), 
+                              linear-gradient(90deg, #dcdcdc 2px, #999 5px, #bbb 8px);
+            background-size: 100% 28px, 5px 100%;
+            background-position: 0 10px, 4px 0;
+            background-repeat: repeat-y;
+            opacity: 0.9;
+            z-index: 20;
+        }
+
+        .scrap-page.active-page {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .polaroid-frame {
+            background: #ffffff;
+            padding: 10px 10px 24px 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            border: 1px solid rgba(0,0,0,0.04);
+            width: 100%;
+            transform: rotate(var(--p-rot));
+            margin-top: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .polaroid-frame::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            width: 80px;
+            height: 20px;
+            background: rgba(245, 240, 215, 0.6);
+            backdrop-filter: blur(0.5px);
+        }
+
+        .polaroid-frame img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 4; /* Standard elegant image aspect ratio for screen framing */
+            object-fit: cover;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: #eaeaea;
+        }
+
+        .notebook-note {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 1.8rem; /* Scaled seamlessly for portrait mobile spaces */
+            color: #1f1914;
+            text-align: center;
+            line-height: 1.2;
+            width: 95%;
+            word-wrap: break-word;
+            padding: 0 4px;
+        }
+
+        /* Mobile Action Bar Layout overrides */
+        .book-nav-bar {
+            position: absolute;
+            bottom: 16px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 16px 0 36px;
+            z-index: 30;
+        }
+
+        .nav-tag {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #615647;
+            cursor: pointer;
+            background: rgba(0,0,0,0.05);
+            padding: 6px 14px;
+            border-radius: 20px;
+            user-select: none;
+        }
+
+        /* --- VIDEO & LETTER MODAL DEFAULT STYLES --- */
+        .video-wrapper {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #000;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+        }
+
+        .letter-scroll-paper {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: pre-line;
+            padding: 8px 4px;
+            max-width: 500px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pin Code Dynamic Shield Component -->
+    <div id="lock-screen">
+        <div class="lock-container">
+            <div id="hint-text-display" class="hint-reminder-text"></div>
+            <div class="passcode-container">
+                <input type="text" id="hidden-pass-input" maxlength="4" autofocus autocomplete="off" autocapitalize="none" spellcheck="false">
+                <div class="pass-cell" id="cell-0"></div>
+                <div class="pass-cell" id="cell-1"></div>
+                <div class="pass-cell" id="cell-2"></div>
+                <div class="pass-cell" id="cell-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Birthday Celebration Typography Layout -->
+    <div id="birthday-portal">
+        <div class="birthday-card" id="bday-card">
+            <h1 class="bday-title">Happy Birthday</h1>
+            <p class="bday-sparkle-sub">✨ to my whole world ✨</p>
+        </div>
+    </div>
+
+    <!-- Cinematic End Credits Layout Wrapper -->
+    <div id="credits-window">
+        <div class="credits-container" id="credits-roller">
+            <div class="credit-line highlight">HAPPY BIRTHDAY FATIMAH 🫶🏻🫶🏻🫶🏻🫶🏻</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY LOVE 😍😍</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY HAPPINESS🥰🥰🥰</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY DREAM GIRL😘😘😘</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY TYPE😏😏😏😏</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY LITTLE GIRL🤗🤗🤗🤗🤗</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY ANGEL 😇😇😇</div>
+        </div>
+    </div>
+
+    <!-- THREE BLOCKS INTERACTIVE HUB NAV MODULE -->
+    <div id="interactive-hub">
+        <div class="hub-block" onclick="openWindow('photo-window')">
+            <div class="hub-icon">📸</div>
+            <div class="hub-info">
+                <div class="hub-title">Memory Gallery</div>
+                <div class="hub-subtitle">Captures frozen perfectly in time</div>
+            </div>
+            <div class="hub-arrow">➔</div>
+        </div>
+
+        <div class="hub-block" onclick="openWindow('video-window')">
+            <div class="hub-icon">🎥</div>
+            <div class="hub-info">
+                <div class="hub-title">Our Moments</div>
+                <div class="hub-subtitle">Play back the laughs and records</div>
+            </div>
+            <div class="hub-arrow">➔</div>
+        </div>
+
+        <div class="hub-block" onclick="openWindow('letter-window')">
+            <div class="hub-icon">💌</div>
+            <div class="hub-info">
+                <div class="hub-title">A Letter to You</div>
+                <div class="hub-subtitle">Everything words were meant to say</div>
+            </div>
+            <div class="hub-arrow">➔</div>
+        </div>
+    </div>
+
+    <!-- MODAL WINDOW SYSTEM DISPLAY MODULES -->
+    <!-- 1. PHONE-RATIO Photo Notebook Modal -->
+    <div id="photo-window" class="content-overlay-window">
+        <div class="window-header">
+            <div class="window-title">Fatimah's Scrapbook</div>
+            <button class="window-close-btn" onclick="closeWindow('photo-window')">✕</button>
+        </div>
+        <div class="window-body">
+            
+            <div class="book-container" id="scrapbook-envelope">
+                <!-- Leather front cover -->
+                <div class="book-cover-front" onclick="turnBookOpen()">
+                    <div class="gold-emboss">Across the Miles:<br>Every Picture of You<br>❤️</div>
+                    <div class="tap-hint">Tap Cover to Open</div>
+                </div>
+
+                <!-- Full phone-ratio notebook stack -->
+                <div class="book-pages-stack" id="pages-stack-wrapper">
+                    
+                    <!-- Page 1 -->
+                    <div class="scrap-page active-page">
+                        <div class="polaroid-frame" style="--p-rot: -1.2deg;">
+                            <img src="photo1.jpg" alt="Memory 1">
+                        </div>
+                        <div class="notebook-note">Thousands of miles between us, but your smile makes it feel like zero... ✨</div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: 1.5deg;">
+                            <img src="photo2.jpg" alt="Memory 2">
+                        </div>
+                        <div class="notebook-note">I look at this photo whenever I miss you most. (Which is all the time) ❤️</div>
+                    </div>
+
+                    <!-- Page 3 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: -2deg;">
+                            <img src="photo3.jpg" alt="Memory 3">
+                        </div>
+                        <div class="notebook-note">We haven’t met in person yet, but my heart knows you perfectly. 🥰</div>
+                    </div>
+
+                    <!-- Page 4 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: 1.2deg;">
+                            <img src="photo4.jpg" alt="Memory 4">
+                        </div>
+                        <div class="notebook-note">My phone gallery is full of you, and it’s my absolute favorite place to be. 😘</div>
+                    </div>
+
+                    <!-- Page 5 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: -1.5deg;">
+                            <img src="photo5.jpg" alt="Memory 5">
+                        </div>
+                        <div class="notebook-note">Distance means so little when someone means this much to you. 🌎</div>
+                    </div>
+
+                    <!-- Page 6 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: 2deg;">
+                            <img src="photo6.jpg" alt="Memory 6">
+                        </div>
+                        <div class="notebook-note">Counting down the days until the screen isn’t what keeps us connected. ⏳✨</div>
+                    </div>
+
+                    <!-- Page 7 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: -1deg;">
+                            <img src="photo7.jpg" alt="Memory 7">
+                        </div>
+                        <div class="notebook-note">No matter how far away you are, you are always right here in my thoughts. 😇</div>
+                    </div>
+
+                    <!-- Page 8 -->
+                    <div class="scrap-page">
+                        <div class="polaroid-frame" style="--p-rot: 1.8deg;">
+                            <img src="photo8.jpg" alt="Memory 8">
+                        </div>
+                        <div class="notebook-note">Happy Birthday, my beautiful girl. One day soon, I’ll tell you this face to face. 👩‍❤️‍👨❤️</div>
+                    </div>
+
+                    <!-- Sheet Turner Actions Footer -->
+                    <div class="book-nav-bar">
+                        <div class="nav-tag" onclick="changeInnerPage(-1)">⬅ Back</div>
+                        <div class="nav-tag" onclick="changeInnerPage(1)">Next Page ➔</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. Video Modal -->
+    <div id="video-window" class="content-overlay-window">
+        <div class="window-header">
+            <div class="window-title">Our Video Timeline</div>
+            <button class="window-close-btn" onclick="closeWindow('video-window')">✕</button>
+        </div>
+        <div class="window-body">
+            <div class="video-wrapper">
+                <video controls playsinline preload="metadata">
+                    <source src="moments.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Letter Modal -->
+    <div id="letter-window" class="content-overlay-window">
+        <div class="window-header">
+            <div class="window-title">To My Whole World...</div>
+            <button class="window-close-btn" onclick="closeWindow('letter-window')">✕</button>
+        </div>
+        <div class="window-body">
+            <div class="letter-scroll-paper">Dearest Fatimah,
+
+            Happy Birthday to the most breathtaking girl in the cosmos. Writing this to let you know how incredibly safe, complete, and loved you make me feel every single day. 
+
+            You are my center, my anchor, and my whole world. Here's to us, to your beautiful soul, and to infinity together.
+
+            Forever yours,
+            Me ❤️</div>
+        </div>
+    </div>
+
+    <!-- 3D WebGL Viewport -->
+    <div id="orbit-engine"></div>
+
+    <!-- Three.js Pipeline Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // --- [A] SECURITY INTERACTION HANDLING ---
+        const TARGET_PASS = "2b1s";
+        let errorCount = 0;
+        let isUnlocked = false;
+        
+        const hiddenInput = document.getElementById('hidden-pass-input');
+        const hintDisplay = document.getElementById('hint-text-display');
+        const cells = [
+            document.getElementById('cell-0'), document.getElementById('cell-1'),
+            document.getElementById('cell-2'), document.getElementById('cell-3')
+        ];
+        const lockScreen = document.getElementById('lock-screen');
+        const bdayCard = document.getElementById('bday-card');
+        const creditsWindow = document.getElementById('credits-window');
+        const creditsRoller = document.getElementById('credits-roller');
+        const interactiveHub = document.getElementById('interactive-hub');
+
+        document.addEventListener('click', () => {
+            if(!isUnlocked) hiddenInput.focus();
+        });
+
+        hiddenInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            
+            for (let i = 0; i < 4; i++) {
+                cells[i].innerText = val[i] ? val[i] : "";
+                cells[i].classList.remove('error');
+                if (i === val.length) cells[i].classList.add('active');
+                else cells[i].classList.remove('active');
+            }
+
+            if (val.length === 4) {
+                if (val === TARGET_PASS) {
+                    isUnlocked = true;
+                    lockScreen.style.opacity = '0';
+                    lockScreen.style.visibility = 'hidden';
+                    hiddenInput.blur();
+                    
+                    setTimeout(() => {
+                        bdayCard.classList.add('ignite');
+                        triggerRocketLaunch();
+                    }, 400);
+
+                    setTimeout(() => {
+                        bdayCard.classList.add('fade-out');
+                        creditsWindow.classList.add('active');
+                        creditsRoller.classList.add('roll');
+                    }, 4500); 
+
+                    setTimeout(() => {
+                        interactiveHub.classList.add('show');
+                        controls.enableZoom = true;
+                    }, 29500); 
+
+                } else {
+                    errorCount++;
+                    let dynamicMessage = "";
+                    if (errorCount === 1) dynamicMessage = "think about us...";
+                    else if (errorCount === 2) dynamicMessage = "what we are 🤐";
+                    else if (errorCount === 3) dynamicMessage = "we are 2 ?..... 🥲";
+                    else dynamicMessage = "we are 2 body 1 soul 🥲";
+
+                    hintDisplay.classList.remove('show');
+                    void hintDisplay.offsetWidth; 
+                    hintDisplay.innerText = dynamicMessage;
+                    hintDisplay.classList.add('show');
+
+                    cells.forEach(cell => cell.classList.add('error'));
+                    setTimeout(() => {
+                        e.target.value = "";
+                        cells.forEach(cell => {
+                            cell.innerText = "";
+                            cell.classList.remove('error', 'active');
+                        });
+                        cells[0].classList.add('active');
+                    }, 500);
+                }
+            }
+        });
+        cells[0].classList.add('active');
+
+        // --- [A-PART 2] HUB INTERACTIVE CONTROL & BOOK ENGINE OVERRIDES ---
+        let currentInnerPage = 0;
+        const totalInnerPages = 8;
+
+        function openWindow(id) {
+            document.getElementById(id).classList.add('open');
+            controls.enabled = false; 
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).classList.remove('open');
+            controls.enabled = true; 
+            
+            const videoElem = document.querySelector(`#${id} video`);
+            if(videoElem) videoElem.pause();
+
+            if(id === 'photo-window') {
+                document.getElementById('scrapbook-envelope').classList.remove('opened');
+                document.getElementById('pages-stack-wrapper').style.display = 'none';
+                currentInnerPage = 0;
+                updateNotebookPagesDOM();
+            }
+        }
+
+        function turnBookOpen() {
+            const container = document.getElementById('scrapbook-envelope');
+            if(!container.classList.contains('opened')) {
+                container.classList.add('opened');
+                setTimeout(() => {
+                    document.getElementById('pages-stack-wrapper').style.display = 'flex';
+                }, 350); 
+            }
+        }
+
+        function changeInnerPage(direction) {
+            currentInnerPage += direction;
+            if(currentInnerPage < 0) currentInnerPage = 0;
+            if(currentInnerPage >= totalInnerPages) currentInnerPage = totalInnerPages - 1;
+            updateNotebookPagesDOM();
+        }
+
+        function updateNotebookPagesDOM() {
+            const pages = document.querySelectorAll('.scrap-page');
+            pages.forEach((page, index) => {
+                if(index === currentInnerPage) {
+                    page.classList.add('active-page');
+                } else {
+                    page.classList.remove('active-page');
+                }
+            });
+        }
+
+        // --- [B] 3D ENGINE CORE WINDOW INITIALIZATION ---
+        const container = document.getElementById('orbit-engine');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const spaceAmbient = new THREE.AmbientLight(0x0a0a16, 0.6); 
+        scene.add(spaceAmbient);
+
+        const primarySunlight = new THREE.DirectionalLight(0xffffff, 4.8);
+        primarySunlight.position.set(14, 5, 10);
+        scene.add(primarySunlight);
+
+        camera.position.set(0, 0.8, 9.2);
+
+        // --- [C] PROCEDURAL TEXTURE GENERATION PIPELINE ---
+        function generateHighResTexture(mode) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.createImageData(canvas.width, canvas.height);
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const idx = (x + y * canvas.width) * 4;
+                    const u = (x / canvas.width) * Math.PI * 2;
+                    const v = (y / canvas.height) * Math.PI;
+                    const nx = Math.sin(u) * Math.sin(v);
+                    const ny = Math.cos(v);
+                    const nz = Math.cos(u) * Math.sin(v);
+
+                    let terrainValue = Math.sin(nx * 4.0 + ny * 1.5) * Math.cos(nz * 4.5) +
+                                       Math.sin(nx * 10.0 - nz * 7.0) * 0.3 +
+                                       Math.cos(ny * 22.0 + nx * 14.0) * 0.12;
+                    terrainValue = (terrainValue + 1.5) / 3.0;
+
+                    if (mode === 'surface') {
+                        if (terrainValue < 0.47) {
+                            imgData.data[idx] = 12; imgData.data[idx+1] = 52; imgData.data[idx+2] = 130;
+                        } else if (terrainValue < 0.495) {
+                            imgData.data[idx] = 215; imgData.data[idx+1] = 185; imgData.data[idx+2] = 140;
+                        } else if (terrainValue < 0.7) {
+                            imgData.data[idx] = 40; imgData.data[idx+1] = 105; imgData.data[idx+2] = 60;
+                        } else if (terrainValue < 0.82) {
+                            imgData.data[idx] = 110; imgData.data[idx+1] = 90; imgData.data[idx+2] = 65;
+                        } else {
+                            imgData.data[idx] = 245; imgData.data[idx+1] = 250; imgData.data[idx+2] = 255;
+                        }
+                        imgData.data[idx+3] = 255;
+                    } else if (mode === 'specular') {
+                        const spec = terrainValue < 0.47 ? 255 : 0;
+                        imgData.data[idx] = spec; imgData.data[idx+1] = spec; imgData.data[idx+2] = spec; imgData.data[idx+3] = 255;
+                    } else if (mode === 'clouds') {
+                        let cl = Math.sin(nx * 7.0) * Math.cos(ny * 7.0) + Math.sin(nz * 15.0) * 0.4;
+                        cl = (cl + 1.4) / 2.8;
+                        const op = cl > 0.54 ? Math.floor((cl - 0.54) * 4.5 * 255) : 0;
+                        imgData.data[idx] = 255; imgData.data[idx+1] = 255; imgData.data[idx+2] = 255; imgData.data[idx+3] = Math.min(op, 180);
+                    } else if (mode === 'moon') {
+                        const sh = Math.floor(terrainValue * 150 + 45);
+                        imgData.data[idx] = sh; imgData.data[idx+1] = sh; imgData.data[idx+2] = sh; imgData.data[idx+3] = 255;
+                    }
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const earthSurfaceMap = generateHighResTexture('surface');
+        const earthSpecularMap = generateHighResTexture('specular');
+        const earthCloudMap = generateHighResTexture('clouds');
+        const moonSurfaceMap = generateHighResTexture('moon');
+
+        // --- [D] PLANETARY MESHE SYSTEM ---
+        const earthGeometry = new THREE.SphereGeometry(1.6, 36, 36);
+        const earthMaterial = new THREE.MeshStandardMaterial({ map: earthSurfaceMap, roughnessMap: earthSpecularMap, roughness: 0.55, metalness: 0.1 });
+        const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+        earthMesh.rotation.z = THREE.MathUtils.degToRad(23.5);
+        scene.add(earthMesh);
+
+        const cloudGeometry = new THREE.SphereGeometry(1.615, 36, 36);
+        const cloudMaterial = new THREE.MeshStandardMaterial({ map: earthCloudMap, transparent: true, depthWrite: false });
+        const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        cloudMesh.rotation.z = THREE.MathUtils.degToRad(23.5);
+        scene.add(cloudMesh);
+
+        const atmosphereGeometry = new THREE.SphereGeometry(1.66, 36, 36);
+        const atmosphereMaterial = new THREE.ShaderMaterial({
+            vertexShader: `varying vec3 vN; void main() { vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+            fragmentShader: `varying vec3 vN; void main() { float intensity = pow(0.68 - dot(vN, vec3(0,0,1.0)), 3.0); gl_FragColor = vec4(vec3(0.35,0.68,1.0) * intensity, intensity * 0.55); }`,
+            blending: THREE.AdditiveBlending, side: THREE.BackSide, transparent: true
+        });
+        const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphereMesh);
+
+        const moonGeometry = new THREE.SphereGeometry(0.3, 20, 20);
+        const moonMaterial = new THREE.MeshStandardMaterial({ map: moonSurfaceMap, roughness: 0.95 });
+        const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+        scene.add(moonMesh);
+
+        // --- [E] BILLBOARD GRAPHICS ---
+        function generateTextSprite(text, textColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.font = "italic 44px 'Cormorant Garamond', serif";
+            ctx.fillStyle = textColor; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(text, 128, 64);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(1.4, 0.7, 1);
+            return sprite;
+        }
+
+        const youLabel = generateTextSprite("You", "#ffffff");
+        youLabel.position.set(0, 2.1, 0); 
+        scene.add(youLabel);
+
+        const meLabel = generateTextSprite("Me", "#48cae4");
+        scene.add(meLabel); 
+
+        const starGeometry = new THREE.BufferGeometry();
+        const starPositions = new Float32Array(450 * 3);
+        for(let i=0; i < 450 * 3; i++) starPositions[i] = (Math.random() - 0.5) * 90;
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const spaceStarfield = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.07, transparent: true, opacity: 0.75 }));
+        scene.add(spaceStarfield);
+
+        // --- [F] 3D PARTICLE CELEBRATION ENGINE (ROCKETS & MASSIVE BURSTS) ---
+        let fireworkParticles = [];
+        let lunarSparkleParticles = [];
+        let activeRockets = [];
+
+        function createSparkParticleTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 16; canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.3, 'rgba(72,202,228,0.8)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 16, 16);
+            return new THREE.CanvasTexture(canvas);
+        }
+        const sparkTexture = createSparkParticleTexture();
+
+        function spawnRocket() {
+            const startX = (Math.random() - 0.5) * 6;
+            const startZ = (Math.random() - 0.5) * 6 - 2;
+            const startY = -6; 
+            
+            const targetX = (Math.random() - 0.5) * 3;
+            const targetY = Math.random() * 2.5 + 1.0; 
+            const targetZ = (Math.random() - 0.5) * 3;
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute([startX, startY, startZ], 3));
+            
+            const mat = new THREE.PointsMaterial({
+                size: 0.35, 
+                map: sparkTexture, 
+                transparent: true, 
+                blending: THREE.AdditiveBlending, 
+                color: 0xffaa44,
+                depthWrite: false
+            });
+            
+            const rocketMesh = new THREE.Points(geom, mat);
+            scene.add(rocketMesh);
+
+            activeRockets.push({
+                mesh: rocketMesh,
+                pos: new THREE.Vector3(startX, startY, startZ),
+                target: new THREE.Vector3(targetX, targetY, targetZ),
+                speed: 0.12 + Math.random() * 0.04
+            });
+        }
+
+        function spawnMassiveBurst(origin) {
+            const pCount = 180; 
+            const geom = new THREE.BufferGeometry();
+            const positions = [];
+            const velocities = [];
+
+            const burstColor = new THREE.Color(['#ffd700', '#48cae4', '#ff3388', '#ffffff', '#00ffcc'][Math.floor(Math.random()*5)]);
+
+            for(let i=0; i<pCount; i++) {
+                positions.push(origin.x, origin.y, origin.z);
+                
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                const speed = Math.random() * 0.12 + 0.06; 
+                
+                velocities.push(
+                    Math.sin(phi) * Math.cos(theta) * speed, 
+                    Math.sin(phi) * Math.sin(theta) * speed, 
+                    Math.cos(phi) * speed
+                );
+            }
+
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            const mat = new THREE.PointsMaterial({
+                size: 0.25, 
+                map: sparkTexture, 
+                transparent: true, 
+                blending: THREE.AdditiveBlending, 
+                depthWrite: false,
+                color: burstColor
+            });
+
+            const points = new THREE.Points(geom, mat);
+            scene.add(points);
+            fireworkParticles.push({ mesh: points, vels: velocities, age: 0, maxAge: 95 });
+        }
+
+        function triggerRocketLaunch() {
+            if(!isUnlocked) return;
+            spawnRocket();
+            setTimeout(triggerRocketLaunch, Math.random() * 600 + 300);
+        }
+
+        function updateLunarSparkler(moonPos) {
+            if(!isUnlocked) return;
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute([moonPos.x, moonPos.y, moonPos.z], 3));
+            const mat = new THREE.PointsMaterial({ size: 0.15, map: sparkTexture, transparent: true, blending: THREE.AdditiveBlending, color: 0xffd700, depthWrite: false });
+            const spark = new THREE.Points(geom, mat);
+            scene.add(spark);
+            lunarSparkleParticles.push({
+                mesh: spark,
+                vel: new THREE.Vector3((Math.random()-0.5)*0.01, (Math.random()-0.5)*0.01 + 0.01, (Math.random()-0.5)*0.01),
+                age: 0, maxAge: 45
+            });
+        }
+
+        // --- [G] RUNTIME TOUCH SYSTEMS ---
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; controls.dampingFactor = 0.08;
+        controls.enableZoom = false; controls.enablePan = false;
+        controls.minPolarAngle = Math.PI/3; controls.maxPolarAngle = Math.PI/1.6;
+
+        // --- [H] RUNTIME ANIMATION PIPELINE LOOPS ---
+        const systemClock = new THREE.Clock();
+        const pathRadius = 4.5;
+        const speedFactor = 0.3;
+
+        function renderProcess() {
+            requestAnimationFrame(renderProcess);
+            const elapsed = systemClock.getElapsedTime();
+            
+            earthMesh.rotation.y = elapsed * 0.025;
+            cloudMesh.rotation.y = elapsed * 0.038;
+
+            const moonX = Math.cos(elapsed * speedFactor) * pathRadius;
+            const moonZ = Math.sin(elapsed * speedFactor) * pathRadius;
+            moonMesh.position.set(moonX, 0, moonZ);
+            moonMesh.rotation.y = -(elapsed * speedFactor) + Math.PI;
+
+            meLabel.position.set(moonX, 0.6, moonZ);
+            youLabel.quaternion.copy(camera.quaternion);
+            meLabel.quaternion.copy(camera.quaternion);
+
+            updateLunarSparkler(moonMesh.position);
+
+            // 1. Process Active Rising Rockets
+            for (let i = activeRockets.length - 1; i >= 0; i--) {
+                const r = activeRockets[i];
+                r.pos.lerp(r.target, r.speed);
+                r.mesh.geometry.attributes.position.setXYZ(0, r.pos.x, r.pos.y, r.pos.z);
+                r.mesh.geometry.attributes.position.needsUpdate = true;
+
+                if (Math.random() > 0.3) {
+                    const trailGeom = new THREE.BufferGeometry();
+                    trailGeom.setAttribute('position', new THREE.Float32BufferAttribute([r.pos.x, r.pos.y, r.pos.z], 3));
+                    const trailMat = new THREE.PointsMaterial({ size: 0.12, map: sparkTexture, transparent: true, color: 0xff5500, opacity: 0.6 });
+                    const ts = new THREE.Points(trailGeom, trailMat);
+                    scene.add(ts);
+                    lunarSparkleParticles.push({ mesh: ts, vel: new THREE.Vector3(0, -0.02, 0), age: 0, maxAge: 20 });
+                }
+
+                if (r.pos.distanceTo(r.target) < 0.15) {
+                    spawnMassiveBurst(r.pos);
+                    scene.remove(r.mesh);
+                    activeRockets.splice(i, 1);
+                }
+            }
+
+            // 2. Process Massive Dispersing Firework Clusters
+            for(let i = fireworkParticles.length - 1; i >= 0; i--) {
+                const f = fireworkParticles[i];
+                const posArr = f.mesh.geometry.attributes.position.array;
+                for(let j=0; j < posArr.length; j+=3) {
+                    posArr[j] += f.vels[j];
+                    posArr[j+1] += f.vels[j+1];
+                    posArr[j+2] += f.vels[j+2];
+                    f.vels[j+1] -= 0.0008; 
+                }
+                f.mesh.geometry.attributes.position.needsUpdate = true;
+                f.mesh.material.opacity = 1.0 - (f.age / f.maxAge);
+                f.age++;
+                if(f.age >= f.maxAge) {
+                    scene.remove(f.mesh);
+                    fireworkParticles.splice(i, 1);
+                }
+            }
+
+            // 3. Process Trail Particles
+            for(let i = lunarSparkleParticles.length - 1; i >= 0; i--) {
+                const s = lunarSparkleParticles[i];
+                s.mesh.position.add(s.vel);
+                s.mesh.material.opacity = 1.0 - (s.age / s.maxAge);
+                s.age++;
+                if(s.age >= s.maxAge) {
+                    scene.remove(s.mesh);
+                    lunarSparkleParticles.splice(i, 1);
+                }
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        renderProcess();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
