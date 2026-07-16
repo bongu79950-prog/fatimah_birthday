@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cosmos</title>
-    <!-- Premium Typography Layout -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Poppins:wght@300;400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
     
     <style>
@@ -61,7 +60,7 @@
         .lock-container {
             text-align: center;
             width: 100%;
-            max-width: 360px;
+            max-width: 400px;
             background: transparent; 
             padding: 0 24px;
         }
@@ -69,12 +68,12 @@
         .hint-reminder-text {
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--earth-glow);
             margin-bottom: 32px;
             min-height: 40px;
-            opacity: 0;
-            transform: scale(0.9);
+            opacity: 1;
+            transform: scale(1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             letter-spacing: -0.5px;
             text-shadow: 0 4px 12px rgba(0, 0, 0, 0.95), 0 0 20px rgba(72, 202, 228, 0.4);
@@ -224,7 +223,7 @@
         }
 
         .credits-container.roll {
-            animation: cinematicScroll 28s linear forwards;
+            animation: cinematicScroll 72s linear forwards;
         }
 
         .credit-line {
@@ -247,9 +246,19 @@
             text-shadow: 0 0 20px rgba(72, 202, 228, 0.6);
         }
 
+        .poetry-gap {
+            margin-top: 160px; /* Generous separation gap to set poem apart */
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 6px;
+            color: var(--celebrate-gold);
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
         @keyframes cinematicScroll {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-155%); }
+            100% { transform: translateY(-165%); }
         }
 
         /* --- THREE HUB BLOCKS LAYOUT --- */
@@ -359,7 +368,7 @@
 
         .window-header {
             width: 100%;
-            padding: 20px 24px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -395,6 +404,7 @@
             height: 100%;
             padding: 16px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
@@ -404,8 +414,8 @@
         .book-container {
             width: 100%;
             height: 100%;
-            max-width: 360px; /* Optimized phone layout width */
-            aspect-ratio: 9 / 16; /* Clean smartphone orientation aspect */
+            max-width: 360px; 
+            aspect-ratio: 9 / 16; 
             perspective: 1500px;
             position: relative;
         }
@@ -418,7 +428,6 @@
             transition: transform 1.0s ease;
         }
 
-        /* Front cover scaled to match mobile display dimensions */
         .book-cover-front {
             position: absolute;
             width: 100%;
@@ -467,7 +476,6 @@
             50% { opacity: 0.9; }
         }
 
-        /* Core inner notebook page stack */
         .book-pages-stack {
             position: absolute;
             width: 100%;
@@ -485,7 +493,6 @@
             transform: rotateY(-145deg);
         }
 
-        /* Inner Phone Page Sheets */
         .scrap-page {
             position: absolute;
             width: 100%;
@@ -493,7 +500,7 @@
             background-color: #faf6ed;
             background-image: linear-gradient(rgba(72, 140, 228, 0.12) 1px, transparent 1px);
             background-size: 100% 26px;
-            padding: 24px 16px 70px 36px; /* Optimized phone ring padding spacing */
+            padding: 76px 16px 24px 36px; /* Optimized padding context shifting space to top navigation layout */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -503,7 +510,6 @@
             justify-content: flex-start;
         }
 
-        /* Mobile spiral wire notebook bind overlay */
         .book-pages-stack::before {
             content: '';
             position: absolute;
@@ -552,7 +558,7 @@
         .polaroid-frame img {
             width: 100%;
             height: auto;
-            aspect-ratio: 3 / 4; /* Standard elegant image aspect ratio for screen framing */
+            aspect-ratio: 3 / 4; 
             object-fit: cover;
             border: 1px solid rgba(0,0,0,0.05);
             background: #eaeaea;
@@ -560,7 +566,7 @@
 
         .notebook-note {
             font-family: 'Reenie Beanie', cursive;
-            font-size: 1.8rem; /* Scaled seamlessly for portrait mobile spaces */
+            font-size: 1.8rem; 
             color: #1f1914;
             text-align: center;
             line-height: 1.2;
@@ -569,10 +575,10 @@
             padding: 0 4px;
         }
 
-        /* Mobile Action Bar Layout overrides */
+        /* Top Bar Notebook Action Layout Controls */
         .book-nav-bar {
             position: absolute;
-            bottom: 16px;
+            top: 16px;
             left: 0;
             width: 100%;
             display: flex;
@@ -587,13 +593,17 @@
             font-weight: 600;
             color: #615647;
             cursor: pointer;
-            background: rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.06);
             padding: 6px 14px;
             border-radius: 20px;
             user-select: none;
+            transition: background 0.2s ease;
+        }
+        
+        .nav-tag:active {
+            background: rgba(0,0,0,0.15);
         }
 
-        /* --- VIDEO & LETTER MODAL DEFAULT STYLES --- */
         .video-wrapper {
             width: 100%;
             max-width: 500px;
@@ -610,22 +620,22 @@
 
         .letter-scroll-paper {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.35rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.45rem;
+            line-height: 2.0;
+            color: rgba(255, 255, 255, 0.95);
             white-space: pre-line;
-            padding: 8px 4px;
+            padding: 24px 16px;
             max-width: 500px;
             letter-spacing: 0.5px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <!-- Pin Code Dynamic Shield Component -->
     <div id="lock-screen">
         <div class="lock-container">
-            <div id="hint-text-display" class="hint-reminder-text"></div>
+            <div id="hint-text-display" class="hint-reminder-text">WELCOME FATIMAH(MY HAPPINESS)</div>
             <div class="passcode-container">
                 <input type="text" id="hidden-pass-input" maxlength="4" autofocus autocomplete="off" autocapitalize="none" spellcheck="false">
                 <div class="pass-cell" id="cell-0"></div>
@@ -636,7 +646,6 @@
         </div>
     </div>
 
-    <!-- Birthday Celebration Typography Layout -->
     <div id="birthday-portal">
         <div class="birthday-card" id="bday-card">
             <h1 class="bday-title">Happy Birthday</h1>
@@ -644,20 +653,32 @@
         </div>
     </div>
 
-    <!-- Cinematic End Credits Layout Wrapper -->
     <div id="credits-window">
         <div class="credits-container" id="credits-roller">
             <div class="credit-line highlight">HAPPY BIRTHDAY FATIMAH 🫶🏻🫶🏻🫶🏻🫶🏻</div>
-            <div class="credit-line">HAPPY BIRTHDAY MY LOVE 😍😍</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY LOVE 😍DD</div>
             <div class="credit-line">HAPPY BIRTHDAY MY HAPPINESS🥰🥰🥰</div>
             <div class="credit-line">HAPPY BIRTHDAY MY DREAM GIRL😘😘😘</div>
             <div class="credit-line">HAPPY BIRTHDAY MY TYPE😏😏😏😏</div>
             <div class="credit-line">HAPPY BIRTHDAY MY LITTLE GIRL🤗🤗🤗🤗🤗</div>
             <div class="credit-line">HAPPY BIRTHDAY MY ANGEL 😇😇😇</div>
+            <div class="credit-line">HAPPY BIRTHDAY TO MY WIFE 💍❤️✨</div>
+            <div class="credit-line">FUTURE MOTHER OF MY KIDS 🤰👶🏻🍼👩‍👩‍👦</div>
+            <div class="credit-line">THE ONLY REASON BEHIND MY SMILE 🥹💖🌸</div>
+            <div class="credit-line">MOTHERS GIVE BIRTH... 🤰🌱✨</div>
+            <div class="credit-line">ALLAH GIVES THE SOUL... 🤍🤲🏻✨</div>
+            <div class="credit-line">AND YOU GAVE ME HAPPINESS & A CRAZY FUNNY LIFE! 🥰🤪❤️🎉</div>
+            
+            <div class="poetry-gap">✨ A Poem for You ✨</div>
+            
+            <div class="credit-line">IF THERE ARE 100,000 PEOPLE WHO LOVE YOU, I AM ONE OF THEM... 👥❤️</div>
+            <div class="credit-line">IF THERE ARE 100 PEOPLE WHO LOVE YOU, I AM ONE OF THEM... 🌹✨</div>
+            <div class="credit-line">IF THERE ARE 10 PEOPLE WHO LOVE YOU, I AM ONE OF THEM... 🔒❤️</div>
+            <div class="credit-line">IF THERE IS ONLY 1 PERSON WHO LOVES YOU, THAT IS ME... 🙋🏻‍♂️💖</div>
+            <div class="credit-line">AND IF NO ONE LOVES YOU, IT MEANS I AM DEAD 🥺🕊️🤍</div>
         </div>
     </div>
 
-    <!-- THREE BLOCKS INTERACTIVE HUB NAV MODULE -->
     <div id="interactive-hub">
         <div class="hub-block" onclick="openWindow('photo-window')">
             <div class="hub-icon">📸</div>
@@ -687,8 +708,6 @@
         </div>
     </div>
 
-    <!-- MODAL WINDOW SYSTEM DISPLAY MODULES -->
-    <!-- 1. PHONE-RATIO Photo Notebook Modal -->
     <div id="photo-window" class="content-overlay-window">
         <div class="window-header">
             <div class="window-title">Fatimah's Scrapbook</div>
@@ -697,16 +716,18 @@
         <div class="window-body">
             
             <div class="book-container" id="scrapbook-envelope">
-                <!-- Leather front cover -->
                 <div class="book-cover-front" onclick="turnBookOpen()">
                     <div class="gold-emboss">Across the Miles:<br>Every Picture of You<br>❤️</div>
                     <div class="tap-hint">Tap Cover to Open</div>
                 </div>
 
-                <!-- Full phone-ratio notebook stack -->
                 <div class="book-pages-stack" id="pages-stack-wrapper">
                     
-                    <!-- Page 1 -->
+                    <div class="book-nav-bar">
+                        <div class="nav-tag" onclick="changeInnerPage(-1)">⬅ Back</div>
+                        <div class="nav-tag" onclick="changeInnerPage(1)">Next Page ➔</div>
+                    </div>
+
                     <div class="scrap-page active-page">
                         <div class="polaroid-frame" style="--p-rot: -1.2deg;">
                             <img src="photo1.jpg" alt="Memory 1">
@@ -714,7 +735,6 @@
                         <div class="notebook-note">Thousands of miles between us, but your smile makes it feel like zero... ✨</div>
                     </div>
 
-                    <!-- Page 2 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.5deg;">
                             <img src="photo2.jpg" alt="Memory 2">
@@ -722,7 +742,6 @@
                         <div class="notebook-note">I look at this photo whenever I miss you most. (Which is all the time) ❤️</div>
                     </div>
 
-                    <!-- Page 3 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -2deg;">
                             <img src="photo3.jpg" alt="Memory 3">
@@ -730,7 +749,6 @@
                         <div class="notebook-note">We haven’t met in person yet, but my heart knows you perfectly. 🥰</div>
                     </div>
 
-                    <!-- Page 4 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.2deg;">
                             <img src="photo4.jpg" alt="Memory 4">
@@ -738,7 +756,6 @@
                         <div class="notebook-note">My phone gallery is full of you, and it’s my absolute favorite place to be. 😘</div>
                     </div>
 
-                    <!-- Page 5 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -1.5deg;">
                             <img src="photo5.jpg" alt="Memory 5">
@@ -746,7 +763,6 @@
                         <div class="notebook-note">Distance means so little when someone means this much to you. 🌎</div>
                     </div>
 
-                    <!-- Page 6 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 2deg;">
                             <img src="photo6.jpg" alt="Memory 6">
@@ -754,7 +770,6 @@
                         <div class="notebook-note">Counting down the days until the screen isn’t what keeps us connected. ⏳✨</div>
                     </div>
 
-                    <!-- Page 7 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -1deg;">
                             <img src="photo7.jpg" alt="Memory 7">
@@ -762,18 +777,11 @@
                         <div class="notebook-note">No matter how far away you are, you are always right here in my thoughts. 😇</div>
                     </div>
 
-                    <!-- Page 8 -->
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.8deg;">
                             <img src="photo8.jpg" alt="Memory 8">
                         </div>
                         <div class="notebook-note">Happy Birthday, my beautiful girl. One day soon, I’ll tell you this face to face. 👩‍❤️‍👨❤️</div>
-                    </div>
-
-                    <!-- Sheet Turner Actions Footer -->
-                    <div class="book-nav-bar">
-                        <div class="nav-tag" onclick="changeInnerPage(-1)">⬅ Back</div>
-                        <div class="nav-tag" onclick="changeInnerPage(1)">Next Page ➔</div>
                     </div>
 
                 </div>
@@ -782,7 +790,6 @@
         </div>
     </div>
 
-    <!-- 2. Video Modal -->
     <div id="video-window" class="content-overlay-window">
         <div class="window-header">
             <div class="window-title">Our Video Timeline</div>
@@ -798,7 +805,6 @@
         </div>
     </div>
 
-    <!-- 3. Letter Modal -->
     <div id="letter-window" class="content-overlay-window">
         <div class="window-header">
             <div class="window-title">To My Whole World...</div>
@@ -816,10 +822,8 @@
         </div>
     </div>
 
-    <!-- 3D WebGL Viewport -->
     <div id="orbit-engine"></div>
 
-    <!-- Three.js Pipeline Stack -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
@@ -875,7 +879,7 @@
                     setTimeout(() => {
                         interactiveHub.classList.add('show');
                         controls.enableZoom = true;
-                    }, 29500); 
+                    }, 73500); 
 
                 } else {
                     errorCount++;
@@ -1054,9 +1058,9 @@
         const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         scene.add(atmosphereMesh);
 
-        const moonGeometry = new THREE.SphereGeometry(0.3, 20, 20);
+        const moonMeshGeometry = new THREE.SphereGeometry(0.3, 20, 20);
         const moonMaterial = new THREE.MeshStandardMaterial({ map: moonSurfaceMap, roughness: 0.95 });
-        const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+        const moonMesh = new THREE.Mesh(moonMeshGeometry, moonMaterial);
         scene.add(moonMesh);
 
         // --- [E] BILLBOARD GRAPHICS ---
