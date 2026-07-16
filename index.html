@@ -156,7 +156,7 @@
             text-align: center;
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 2.0s ease, transform 2.0s ease, filter 1.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
         }
 
         .birthday-card.ignite {
@@ -204,7 +204,7 @@
             justify-content: center;
             overflow: hidden;
             background: rgba(1, 1, 3, 0.0);
-            transition: background 3.0s ease;
+            transition: background 2.0s ease;
         }
 
         #credits-window.active {
@@ -223,7 +223,7 @@
         }
 
         .credits-container.roll {
-            animation: cinematicScroll 72s linear forwards;
+            animation: cinematicScroll 48s linear forwards;
         }
 
         .credit-line {
@@ -247,7 +247,7 @@
         }
 
         .poetry-gap {
-            margin-top: 160px; /* Generous separation gap to set poem apart */
+            margin-top: 160px; 
             font-family: 'Poppins', sans-serif;
             font-size: 1.1rem;
             letter-spacing: 6px;
@@ -261,7 +261,7 @@
             100% { transform: translateY(-165%); }
         }
 
-        /* --- THREE HUB BLOCKS LAYOUT --- */
+        /* --- TWO HUB BLOCKS LAYOUT --- */
         #interactive-hub {
             position: absolute;
             bottom: -200px; 
@@ -279,7 +279,7 @@
         }
 
         #interactive-hub.show {
-            bottom: 40px;
+            bottom: 60px; 
             opacity: 1;
         }
 
@@ -500,7 +500,7 @@
             background-color: #faf6ed;
             background-image: linear-gradient(rgba(72, 140, 228, 0.12) 1px, transparent 1px);
             background-size: 100% 26px;
-            padding: 76px 16px 24px 36px; /* Optimized padding context shifting space to top navigation layout */
+            padding: 76px 16px 24px 36px; 
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -533,26 +533,29 @@
 
         .polaroid-frame {
             background: #ffffff;
-            padding: 10px 10px 24px 10px;
+            padding: 10px 10px 14px 10px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.12);
             border: 1px solid rgba(0,0,0,0.04);
             width: 100%;
             transform: rotate(var(--p-rot));
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-top: 15px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .polaroid-frame::before {
             content: '';
             position: absolute;
-            top: -10px;
+            bottom: -10px; /* Shifted tape hint down relative to frame direction */
             left: 50%;
             transform: translateX(-50%) rotate(-1deg);
             width: 80px;
             height: 20px;
             background: rgba(245, 240, 215, 0.6);
             backdrop-filter: blur(0.5px);
+            z-index: 2;
         }
 
         .polaroid-frame img {
@@ -569,10 +572,11 @@
             font-size: 1.8rem; 
             color: #1f1914;
             text-align: center;
-            line-height: 1.2;
-            width: 95%;
+            line-height: 1.1;
+            width: 100%;
             word-wrap: break-word;
-            padding: 0 4px;
+            padding: 0 2px;
+            margin-bottom: 12px; /* Pushes the text nicely above the image */
         }
 
         /* Top Bar Notebook Action Layout Controls */
@@ -617,18 +621,6 @@
             width: 100%;
             display: block;
         }
-
-        .letter-scroll-paper {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.45rem;
-            line-height: 2.0;
-            color: rgba(255, 255, 255, 0.95);
-            white-space: pre-line;
-            padding: 24px 16px;
-            max-width: 500px;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -656,7 +648,7 @@
     <div id="credits-window">
         <div class="credits-container" id="credits-roller">
             <div class="credit-line highlight">HAPPY BIRTHDAY FATIMAH 🫶🏻🫶🏻🫶🏻🫶🏻</div>
-            <div class="credit-line">HAPPY BIRTHDAY MY LOVE 😍DD</div>
+            <div class="credit-line">HAPPY BIRTHDAY MY LOVE 😍DOES DESIGN</div>
             <div class="credit-line">HAPPY BIRTHDAY MY HAPPINESS🥰🥰🥰</div>
             <div class="credit-line">HAPPY BIRTHDAY MY DREAM GIRL😘😘😘</div>
             <div class="credit-line">HAPPY BIRTHDAY MY TYPE😏😏😏😏</div>
@@ -697,15 +689,6 @@
             </div>
             <div class="hub-arrow">➔</div>
         </div>
-
-        <div class="hub-block" onclick="openWindow('letter-window')">
-            <div class="hub-icon">💌</div>
-            <div class="hub-info">
-                <div class="hub-title">A Letter to You</div>
-                <div class="hub-subtitle">Everything words were meant to say</div>
-            </div>
-            <div class="hub-arrow">➔</div>
-        </div>
     </div>
 
     <div id="photo-window" class="content-overlay-window">
@@ -730,58 +713,58 @@
 
                     <div class="scrap-page active-page">
                         <div class="polaroid-frame" style="--p-rot: -1.2deg;">
+                            <div class="notebook-note">Thousands of miles between us, but your smile makes it feel like zero... ✨</div>
                             <img src="photo1.jpg" alt="Memory 1">
                         </div>
-                        <div class="notebook-note">Thousands of miles between us, but your smile makes it feel like zero... ✨</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.5deg;">
+                            <div class="notebook-note">I look at this photo whenever I miss you most. (Which is all the time) ❤️</div>
                             <img src="photo2.jpg" alt="Memory 2">
                         </div>
-                        <div class="notebook-note">I look at this photo whenever I miss you most. (Which is all the time) ❤️</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -2deg;">
+                            <div class="notebook-note">We haven’t met in person yet, but my heart knows you perfectly. 🥰</div>
                             <img src="photo3.jpg" alt="Memory 3">
                         </div>
-                        <div class="notebook-note">We haven’t met in person yet, but my heart knows you perfectly. 🥰</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.2deg;">
+                            <div class="notebook-note">My phone gallery is full of you, and it’s my absolute favorite place to be. 😘</div>
                             <img src="photo4.jpg" alt="Memory 4">
                         </div>
-                        <div class="notebook-note">My phone gallery is full of you, and it’s my absolute favorite place to be. 😘</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -1.5deg;">
+                            <div class="notebook-note">Distance means so little when someone means this much to you. 🌎</div>
                             <img src="photo5.jpg" alt="Memory 5">
                         </div>
-                        <div class="notebook-note">Distance means so little when someone means this much to you. 🌎</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 2deg;">
+                            <div class="notebook-note">Counting down the days until the screen isn’t what keeps us connected. ⏳✨</div>
                             <img src="photo6.jpg" alt="Memory 6">
                         </div>
-                        <div class="notebook-note">Counting down the days until the screen isn’t what keeps us connected. ⏳✨</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: -1deg;">
+                            <div class="notebook-note">No matter how far away you are, you are always right here in my thoughts. 😇</div>
                             <img src="photo7.jpg" alt="Memory 7">
                         </div>
-                        <div class="notebook-note">No matter how far away you are, you are always right here in my thoughts. 😇</div>
                     </div>
 
                     <div class="scrap-page">
                         <div class="polaroid-frame" style="--p-rot: 1.8deg;">
+                            <div class="notebook-note">Happy Birthday, my beautiful girl. One day soon, I’ll tell you this face to face. 👩‍❤️‍👨❤️</div>
                             <img src="photo8.jpg" alt="Memory 8">
                         </div>
-                        <div class="notebook-note">Happy Birthday, my beautiful girl. One day soon, I’ll tell you this face to face. 👩‍❤️‍👨❤️</div>
                     </div>
 
                 </div>
@@ -802,23 +785,6 @@
                     Your browser does not support the video tag.
                 </video>
             </div>
-        </div>
-    </div>
-
-    <div id="letter-window" class="content-overlay-window">
-        <div class="window-header">
-            <div class="window-title">To My Whole World...</div>
-            <button class="window-close-btn" onclick="closeWindow('letter-window')">✕</button>
-        </div>
-        <div class="window-body">
-            <div class="letter-scroll-paper">Dearest Fatimah,
-
-            Happy Birthday to the most breathtaking girl in the cosmos. Writing this to let you know how incredibly safe, complete, and loved you make me feel every single day. 
-
-            You are my center, my anchor, and my whole world. Here's to us, to your beautiful soul, and to infinity together.
-
-            Forever yours,
-            Me ❤️</div>
         </div>
     </div>
 
@@ -865,21 +831,24 @@
                     lockScreen.style.visibility = 'hidden';
                     hiddenInput.blur();
                     
+                    // Instant flash launch
                     setTimeout(() => {
                         bdayCard.classList.add('ignite');
                         triggerRocketLaunch();
-                    }, 400);
+                    }, 200);
 
+                    // Reduced target duration from 4.5s down to 1s total!
                     setTimeout(() => {
                         bdayCard.classList.add('fade-out');
                         creditsWindow.classList.add('active');
                         creditsRoller.classList.add('roll');
-                    }, 4500); 
+                    }, 1200); 
 
+                    // Adjusted timing window for the hub to align with credit animations
                     setTimeout(() => {
                         interactiveHub.classList.add('show');
                         controls.enableZoom = true;
-                    }, 73500); 
+                    }, 48500); 
 
                 } else {
                     errorCount++;
